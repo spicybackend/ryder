@@ -57,6 +57,20 @@ class AuthService {
     return sessionResponse.user!;
   }
 
+  Future<User> signInWithProvider(Provider provider) async {
+    final sessionResponse = await _supabase.auth.signIn(provider: provider);
+
+    if (sessionResponse.error != null) {
+      throw AuthException(sessionResponse.error!.message);
+    }
+
+    if (sessionResponse.url != null) {
+      print(sessionResponse.url);
+    }
+
+    return sessionResponse.user!;
+  }
+
   Future<User> register({
     required String email,
     required String password,

@@ -13,7 +13,7 @@ abstract class RyderTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(25),
           ),
-          elevation: 15.0,
+          elevation: 7.0,
         ),
       ),
       textButtonTheme: TextButtonThemeData(

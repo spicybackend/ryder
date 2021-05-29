@@ -4,11 +4,17 @@ import 'package:flutter/services.dart';
 import 'package:ryder/auth_page.dart';
 import 'package:ryder/config/ryder_theme.dart';
 
-void main() {
+import 'config/environment.dart';
+import 'config/service_configuration.dart';
+
+void main() async {
   LicenseRegistry.addLicense(() async* {
     final license = await rootBundle.loadString('google_fonts/LICENSE.txt');
     yield LicenseEntryWithLineBreaks(['google_fonts'], license);
   });
+
+  await Environment.loadEnvironment();
+  ServiceConfiguration.registerServices();
 
   runApp(MyApp());
 }
