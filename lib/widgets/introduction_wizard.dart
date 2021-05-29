@@ -99,6 +99,7 @@ class IntroductionWizard extends StatelessWidget {
                                 decoration: InputDecoration(
                                   labelText: 'Username',
                                 ),
+                                textInputAction: TextInputAction.next,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Please enter your username';
@@ -117,6 +118,7 @@ class IntroductionWizard extends StatelessWidget {
                                 decoration: InputDecoration(
                                   labelText: 'Bio (optional)',
                                 ),
+                                textInputAction: TextInputAction.done,
                               ),
                             ],
                           ),

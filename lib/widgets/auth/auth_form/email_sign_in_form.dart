@@ -51,6 +51,7 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
                   decoration: InputDecoration(
                     labelText: 'Email',
                   ),
+                  textInputAction: TextInputAction.next,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your email';
@@ -66,6 +67,8 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
                   decoration: InputDecoration(
                     labelText: 'Password',
                   ),
+                  textInputAction: TextInputAction.done,
+                  onFieldSubmitted: _isBusy ? null : (_) => _submit(),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your password';
@@ -91,30 +94,7 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
                                 child: CircularProgressIndicator(),
                               )
                             : Text("Sign in"),
-                        onPressed: _isBusy
-                            ? null
-                            : () async {
-                                if (_emailFormKey.currentState!.validate()) {
-                                  setState(() {
-                                    _isBusy = true;
-                                  });
-
-                                  try {
-                                    await _authService.signIn(
-                                      _emailController.text,
-                                      _passwordController.text,
-                                    );
-                                  } on AuthException catch (e) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text(e.message)),
-                                    );
-                                  } finally {
-                                    setState(() {
-                                      _isBusy = false;
-                                    });
-                                  }
-                                }
-                              },
+                        onPressed: _isBusy ? null : () => _submit(),
                       ),
                     ),
                   ],
@@ -135,5 +115,28 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
         ),
       ),
     );
+  }
+
+  Future _submit() async {
+    if (_emailFormKey.currentState!.validate()) {
+      setState(() {
+        _isBusy = true;
+      });
+
+      try {
+        await _authService.signIn(
+          _emailController.text,
+          _passwordController.text,
+        );
+      } on AuthException catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.message)),
+        );
+      } finally {
+        setState(() {
+          _isBusy = false;
+        });
+      }
+    }
   }
 }

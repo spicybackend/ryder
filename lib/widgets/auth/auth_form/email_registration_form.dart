@@ -54,6 +54,7 @@ class _EmailRegistrationFormState extends State<EmailRegistrationForm> {
                   decoration: InputDecoration(
                     labelText: 'Email',
                   ),
+                  textInputAction: TextInputAction.next,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your email';
@@ -72,6 +73,7 @@ class _EmailRegistrationFormState extends State<EmailRegistrationForm> {
                   decoration: InputDecoration(
                     labelText: 'Password',
                   ),
+                  textInputAction: TextInputAction.next,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your password';
@@ -90,6 +92,8 @@ class _EmailRegistrationFormState extends State<EmailRegistrationForm> {
                   decoration: InputDecoration(
                     labelText: 'Password confirmation',
                   ),
+                  textInputAction: TextInputAction.done,
+                  onFieldSubmitted: _isBusy ? null : (_) => _submit(),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Requied to double-check your password';
@@ -112,30 +116,7 @@ class _EmailRegistrationFormState extends State<EmailRegistrationForm> {
                                 child: CircularProgressIndicator(),
                               )
                             : Text("Register"),
-                        onPressed: _isBusy
-                            ? null
-                            : () async {
-                                if (_emailFormKey.currentState!.validate()) {
-                                  setState(() {
-                                    _isBusy = true;
-                                  });
-
-                                  try {
-                                    await _authService.register(
-                                      email: _emailController.text,
-                                      password: _passwordController.text,
-                                    );
-                                  } on AuthException catch (e) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text(e.message)),
-                                    );
-                                  } finally {
-                                    setState(() {
-                                      _isBusy = false;
-                                    });
-                                  }
-                                }
-                              },
+                        onPressed: _isBusy ? null : () => _submit(),
                       ),
                     ),
                   ],
@@ -156,5 +137,28 @@ class _EmailRegistrationFormState extends State<EmailRegistrationForm> {
         ),
       ),
     );
+  }
+
+  Future _submit() async {
+    if (_emailFormKey.currentState!.validate()) {
+      setState(() {
+        _isBusy = true;
+      });
+
+      try {
+        await _authService.register(
+          email: _emailController.text,
+          password: _passwordController.text,
+        );
+      } on AuthException catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.message)),
+        );
+      } finally {
+        setState(() {
+          _isBusy = false;
+        });
+      }
+    }
   }
 }
