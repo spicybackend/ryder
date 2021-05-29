@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../exceptions/auth_exception.dart';
 import '../../../services/auth_service.dart';
 import '../../../utils/dependency_injection.dart';
+import '../../introduction_wizard.dart';
 
 final _authService = injected<AuthService>();
 
@@ -20,6 +21,7 @@ class _EmailRegistrationFormState extends State<EmailRegistrationForm> {
   final _emailFormKey = GlobalKey<FormState>(debugLabel: 'registration-form');
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _passwordConfirmationController = TextEditingController();
 
   bool _isBusy = false;
 
@@ -56,12 +58,15 @@ class _EmailRegistrationFormState extends State<EmailRegistrationForm> {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your email';
                     }
+                    if (!value.contains('@')) {
+                      return 'That doesn\'t quite look right';
+                    }
                     return null;
                   },
                 ),
                 TextFormField(
                   controller: _passwordController,
-                  autofillHints: [AutofillHints.password],
+                  autofillHints: [AutofillHints.newPassword],
                   obscureText: true,
                   autocorrect: false,
                   decoration: InputDecoration(
@@ -71,12 +76,15 @@ class _EmailRegistrationFormState extends State<EmailRegistrationForm> {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your password';
                     }
+                    if (value.length < 6) {
+                      return 'Needs to be at least six characters long';
+                    }
+
                     return null;
                   },
                 ),
                 TextFormField(
-                  controller: _passwordController,
-                  autofillHints: [AutofillHints.password],
+                  controller: _passwordConfirmationController,
                   obscureText: true,
                   autocorrect: false,
                   decoration: InputDecoration(
@@ -84,7 +92,10 @@ class _EmailRegistrationFormState extends State<EmailRegistrationForm> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Just to double-check';
+                      return 'Requied to double-check your password';
+                    }
+                    if (value != _passwordController.text) {
+                      return 'Whoops, your passwords don\'t match';
                     }
                     return null;
                   },
@@ -95,7 +106,11 @@ class _EmailRegistrationFormState extends State<EmailRegistrationForm> {
                     Expanded(
                       child: ElevatedButton(
                         child: _isBusy
-                            ? CircularProgressIndicator()
+                            ? SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(),
+                              )
                             : Text("Register"),
                         onPressed: _isBusy
                             ? null
@@ -106,9 +121,9 @@ class _EmailRegistrationFormState extends State<EmailRegistrationForm> {
                                   });
 
                                   try {
-                                    final user = await _authService.signIn(
-                                      _emailController.text,
-                                      _passwordController.text,
+                                    await _authService.register(
+                                      email: _emailController.text,
+                                      password: _passwordController.text,
                                     );
                                   } on AuthException catch (e) {
                                     ScaffoldMessenger.of(context).showSnackBar(

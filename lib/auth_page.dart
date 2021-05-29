@@ -19,7 +19,7 @@ class AuthPage extends StatelessWidget {
                 Colors.amber,
               ],
               durations: [19440, 10800, 6000],
-              heightPercentages: [0.82, 0.83, 0.84],
+              heightPercentages: [0.80, 0.81, 0.82],
               blur: MaskFilter.blur(BlurStyle.solid, 10),
             ),
             waveAmplitude: 1.5,
@@ -127,8 +127,10 @@ class _AnimatedHeaderState extends State<AnimatedHeader>
 
   @override
   void dispose() {
-    super.dispose();
     _controller.dispose();
+    _controllerTwo.dispose();
+
+    super.dispose();
   }
 
   @override

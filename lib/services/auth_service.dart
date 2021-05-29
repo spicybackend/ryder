@@ -12,33 +12,20 @@ class AuthService {
   User? get currentUser => _supabase.auth.user();
   bool get isLoggedIn => currentUser != null;
 
-  Stream<User?> get userStream {
-    late StreamController<User?> controller;
-    var active = true;
+  Stream<User?> onAuthStateChanged() {
+    final streamController = StreamController<User?>();
 
-    void update(User? user) {
-      controller.add(user);
-      if (!active) {
-        controller.close();
-      }
-    }
+    streamController.add(currentUser);
+    _supabase.auth.onAuthStateChange((event, session) {
+      if (!streamController.isPaused && !streamController.isClosed)
+        streamController.add(session?.user);
+    });
 
-    void start() {
-      _supabase.auth.onAuthStateChange((event, session) {
-        if (active) {
-          update(session?.user);
-        }
-      });
-    }
+    streamController.onCancel = () {
+      streamController.close();
+    };
 
-    void stop() {
-      active = false;
-    }
-
-    controller = StreamController<User>(
-        onListen: start, onPause: stop, onResume: start, onCancel: stop);
-
-    return controller.stream;
+    return streamController.stream;
   }
 
   Future<User> signIn(
@@ -76,14 +63,18 @@ class AuthService {
     required String password,
     String? username,
   }) async {
-    final sessionResponse = await _supabase.auth.signUp(email, password);
+    try {
+      final sessionResponse = await _supabase.auth.signUp(email, password);
 
-    if (sessionResponse.error != null) {
-      print(sessionResponse.error!.message);
-      throw AuthException(sessionResponse.error!.message);
+      if (sessionResponse.error != null) {
+        print(sessionResponse.error!.message);
+        throw AuthException(sessionResponse.error!.message);
+      }
+
+      return sessionResponse.user!;
+    } catch (e) {
+      throw AuthException(e.toString());
     }
-
-    return sessionResponse.user!;
   }
 
   Future resetPassword({required String email}) async {

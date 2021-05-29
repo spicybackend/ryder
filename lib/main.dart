@@ -1,11 +1,17 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:ryder/auth_page.dart';
-import 'package:ryder/config/ryder_theme.dart';
+import 'package:supabase/supabase.dart';
 
+import 'auth_page.dart';
 import 'config/environment.dart';
 import 'config/service_configuration.dart';
+import 'config/ryder_theme.dart';
+import 'services/auth_service.dart';
+import 'utils/dependency_injection.dart';
+import 'widgets/home_page.dart';
+
+final _authService = injected<AuthService>();
 
 void main() async {
   LicenseRegistry.addLicense(() async* {
@@ -25,7 +31,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Ryder',
       theme: RyderTheme.lightTheme,
-      home: AuthPage(),
+      home: StreamBuilder<User?>(
+        stream: _authService.onAuthStateChanged(),
+        builder: (context, snapshot) =>
+            snapshot.data == null ? AuthPage() : HomePage(),
+      ),
       debugShowCheckedModeBanner: false,
     );
   }

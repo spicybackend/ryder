@@ -85,7 +85,11 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
                     Expanded(
                       child: ElevatedButton(
                         child: _isBusy
-                            ? CircularProgressIndicator()
+                            ? SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(),
+                              )
                             : Text("Sign in"),
                         onPressed: _isBusy
                             ? null
@@ -96,7 +100,7 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
                                   });
 
                                   try {
-                                    final user = await _authService.signIn(
+                                    await _authService.signIn(
                                       _emailController.text,
                                       _passwordController.text,
                                     );
