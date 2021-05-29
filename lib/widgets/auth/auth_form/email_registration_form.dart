@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../exceptions/auth_exception.dart';
 import '../../../services/auth_service.dart';
 import '../../../utils/dependency_injection.dart';
-import '../../introduction_wizard.dart';
 
 final _authService = injected<AuthService>();
 

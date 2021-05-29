@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:ryder/constants/auth.dart';
 import 'package:ryder/exceptions/auth_exception.dart';
 import 'package:ryder/utils/supabase.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase/supabase.dart';
 
 class AuthService {
@@ -15,7 +17,12 @@ class AuthService {
   Stream<User?> onAuthStateChanged() {
     final streamController = StreamController<User?>();
 
-    streamController.add(currentUser);
+    if (currentUser != null) {
+      streamController.add(currentUser);
+    } else {
+      _restoreSession().then((value) => streamController.add(value?.user));
+    }
+
     _supabase.auth.onAuthStateChange((event, session) {
       if (!streamController.isPaused && !streamController.isClosed)
         streamController.add(session?.user);
@@ -26,6 +33,23 @@ class AuthService {
     };
 
     return streamController.stream;
+  }
+
+  Future<Session?> _restoreSession() async {
+    final prefs = await SharedPreferences.getInstance();
+    bool exist = prefs.containsKey(PERSIST_SESSION_KEY);
+    if (!exist) {
+      return null;
+    }
+
+    final jsonStr = prefs.getString(PERSIST_SESSION_KEY)!;
+    final response = await Supabase.client.auth.recoverSession(jsonStr);
+    if (response.error != null) {
+      prefs.remove(PERSIST_SESSION_KEY);
+      return null;
+    }
+
+    return response.data;
   }
 
   Future<User> signIn(
@@ -40,6 +64,12 @@ class AuthService {
     if (sessionResponse.error != null) {
       throw AuthException(sessionResponse.error!.message);
     }
+
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString(
+      PERSIST_SESSION_KEY,
+      sessionResponse.data!.persistSessionString,
+    );
 
     return sessionResponse.user!;
   }
@@ -82,6 +112,9 @@ class AuthService {
   }
 
   Future signOut() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove(PERSIST_SESSION_KEY);
+
     await _supabase.auth.signOut();
   }
 

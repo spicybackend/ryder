@@ -79,7 +79,10 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      // TODO: Reset password
+                      print(_authService.currentUser?.email ?? 'not signed in');
+                    },
                     child: Text("Recover password"),
                   ),
                 ),
