@@ -31,6 +31,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Ryder',
       theme: RyderTheme.lightTheme,
+      darkTheme: RyderTheme.darkTheme,
+      themeMode: ThemeMode.system,
       home: StreamBuilder<User?>(
         stream: _authService.onAuthStateChanged(),
         builder: (context, snapshot) =>
