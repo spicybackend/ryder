@@ -62,8 +62,8 @@ class AuthPage extends StatelessWidget {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: <Color>[
-                Colors.white.withOpacity(0.2),
-                Colors.white.withOpacity(0.75),
+                Colors.white.withOpacity(0.1),
+                Colors.white.withOpacity(0.6),
               ],
             ),
           ),

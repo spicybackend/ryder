@@ -27,18 +27,30 @@ abstract class RyderTheme {
 
   static ThemeData get lightTheme => _commonThemeData.copyWith(
         brightness: Brightness.light,
+        splashColor: Colors.white24,
+        highlightColor: Colors.amber.shade300,
       );
 
   static ThemeData get darkTheme => _commonThemeData.copyWith(
         brightness: Brightness.dark,
+        splashColor: Colors.black26,
+        highlightColor: Colors.amber.shade600,
         appBarTheme: AppBarTheme(brightness: Brightness.light),
         scaffoldBackgroundColor: Colors.grey[900],
         indicatorColor: Colors.white,
         canvasColor: Colors.black,
         textTheme: Typography.whiteCupertino,
+        inputDecorationTheme: InputDecorationTheme(
+          labelStyle: TextStyle(
+            color: Colors.grey[200],
+          ),
+        ),
         iconTheme: IconThemeData(color: Colors.white),
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
           unselectedItemColor: Colors.grey[400],
+        ),
+        snackBarTheme: SnackBarThemeData(
+          contentTextStyle: TextStyle(color: Colors.white),
         ),
       );
 }

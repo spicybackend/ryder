@@ -31,7 +31,7 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 32, vertical: 24),
           decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.all(Radius.circular(16)),
               boxShadow: [
                 BoxShadow(

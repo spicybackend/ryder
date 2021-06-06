@@ -3,6 +3,9 @@ import 'package:ryder/services/profile_service.dart';
 
 import '../utils/dependency_injection.dart';
 import 'introduction_wizard.dart';
+import 'pages/explore_page.dart';
+import 'pages/tracks_page.dart';
+import 'pages/profile_page.dart';
 
 final _profileService = injected<ProfileService>();
 
@@ -15,30 +18,9 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
   static List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Nothing to show',
-      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-    ),
-    Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          'Tracks coming soon',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        Icon(Icons.construction),
-      ],
-    ),
-    Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          'Profile coming soon',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        Icon(Icons.construction),
-      ],
-    ),
+    FeedPage(),
+    TracksPage(),
+    ProfilePage(),
   ];
 
   void _onItemTapped(int index) {
@@ -65,17 +47,14 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Ryder'),
-      ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+            icon: Icon(Icons.explore),
+            label: 'Explore',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.pedal_bike),
