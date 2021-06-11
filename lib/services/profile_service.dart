@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:ryder/exceptions/profile_exception.dart';
+import 'package:ryder/models/profile.dart';
 import 'package:ryder/utils/postgres_errors.dart';
 import 'package:ryder/utils/supabase.dart';
 import 'package:supabase/supabase.dart';
@@ -16,6 +17,11 @@ class ProfileService {
   ProfileService() : _supabase = Supabase.client;
 
   Future<bool> hasProfile() async {
+    final profile = await currentUserProfile();
+    return profile != null;
+  }
+
+  Future<Profile?> currentUserProfile() async {
     _authService.assertLoggedIn();
 
     final query = _supabase
@@ -26,10 +32,10 @@ class ProfileService {
     final result = await query.execute();
 
     if (result.error != null) {
-      return false;
+      return null;
     }
 
-    return result.data != null;
+    return Profile.fromJson(result.data);
   }
 
   Future<void> create({
